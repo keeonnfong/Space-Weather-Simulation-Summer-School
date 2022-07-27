@@ -25,10 +25,10 @@ N = 8
 u0 = 0
 uf = 0
 
-for order in [2]: # try 1st and 2nd order for neumann BC
+for order in [1,2]: # try 1st and 2nd order for neumann BC
     errorwithn = np.array([])
     nlist = np.array([])    
-    for i in [1]: # repeat for any number of improvements in N points
+    for i in [1,2,3,4,5]: # repeat for any number of improvements in N points
         Dx = 1/N
         x = np.linspace(0,1,N+1)
         
