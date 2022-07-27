@@ -49,7 +49,9 @@ Here are steps on the road to producing a radiative transfer model of Earth's up
 
 6. Make a function that takes the altitude, temperature, scale-height, and bottom density and returns the density as a function of altitude. Run this for O and make sure if looks as expected. (Use n(O, 100 km) = 5.0e17/m3.)
 
-7. Make a function that takes SZA, n(O, z), H(O, z), sigma(O, wavelength) and returns Tau as a function of altitude. For a first pass, I would concentrate only on one wavelength (e.g., 50 - 100 Angstrom bin) and SZA = 0.  Plot out the single Tau as a function of wavelength.  Tau should pass through 1 somewhere between 120 - 150 km altitude.  Once this works, you can make the Tau for all of the 37 wavelength bins. Tau will then be a function of wavelength and altitude.  You can then implement SZA and limit it to < 75 degrees.
+7. Make a function that takes SZA, n(O, z), H(O, z), sigma(O, wavelength) and returns Tau as a function of altitude. For a first pass, I would concentrate only on one wavelength (e.g., 50 - 100 Angstrom bin) and SZA = 0.  Plot out the single Tau as a function of wavelength.  Tau should pass through 1 somewhere between 120 - 150 km altitude.  Once this works, you can make the Tau for all of the 37 wavelength bins. Tau will then be a function of wavelength and altitude. 
+
+(If you make it here, you are doing really, really well).
 
 8. Create a function that calculates the energy as a function of wavelength bin. It should take the wavelength and return energy.
 
@@ -57,9 +59,11 @@ Here are steps on the road to producing a radiative transfer model of Earth's up
 
 10. Expand all relevant functions that use n(O, z) to use n(O2, z) and n(N2, z) also. 
 
+11. You can then implement SZA in the Tau calculation. Limit it to < 75 degrees, and have Tau be very large (say 10 or so) if SZA < 75 degrees.
+
 11. Set a dt (less than 5 minutes), and then update T given dT/dt. Recalculate n(O, z), n(O2, z), and n(N2, z) using your functions.
 
-12. Update the SZA given the time.
+12. Update the SZA given the time of day.
 
 13. Repeat for 24 hours.
 

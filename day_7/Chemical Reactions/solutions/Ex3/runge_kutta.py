@@ -18,12 +18,12 @@ def explicit_RK_stepper(f,x,t,h,a,b,c):
     """
     s = len(c)
     ks = [f(x,t)]
-    x_new = x + h*b[0]*ks[0]
+    x_hat = x + h*b[0]*ks[0]
     for i in range(s-1):
         y = x + h*sum(a[i][j]*ks[j] for j in range(i+1))
-        ks.append(f(y, t+h*c[i+1]))
-        x_new += h*b[i+1]*ks[-1]
-    return x_new
+        ks.append(f(y,t+h*c[i+1]))
+        x_hat += h*b[i+1]*ks[-1]
+    return x_hat
 
 def integrate(f, x0, tspan, h, step):
     """
@@ -34,8 +34,8 @@ def integrate(f, x0, tspan, h, step):
             x0    - initial condition (numpy array)
             tspan - integration horizon (t0, tf) (tuple)
             h     - step size
-            step   - integrator with signature: 
-                        step(x,t,f,h) returns state at time t+h 
+            int   - integrator with signature: 
+                        step(f,x,t,h) returns state at time t+h 
                         - x current state
                         - t current time 
                         - f rhs of ODE to be integrated
@@ -75,10 +75,21 @@ def adaptive_explicit_RK_stepper(f,x,t,h,a,b,c,b_control):
             x_new - estimate of state at time t + h
             error - estimate of the accuracy
     """
-    return ... # please complete this function 
-               # hint: 
-               # It should be a rather simple adaptation of 
-               # explicit_RK_stepper
+    n = len(c)
+    ks = [f(x,t)]
+    x_hat = x + h*b[0]*ks[0]
+    error = h*(b[0]-b_control[0])*ks[0]
+    for i in range(n-1):
+        y = x + h*sum(a[i][j]*ks[j] for j in range(i+1))
+        ks.append(f(y, t+h*c[i+1]))
+        x_hat += h*b[i+1]*ks[-1]
+        error += h*(b[i+1]-b_control[i+1])*ks[-1]
+    return x_hat, norm(error)
+
+    #return ... # please complete this function 
+                # hint: 
+                # It should be a rather simple adaptation of 
+                # explicit_RK_stepper
 
 def adaptive_integrate(f, x0, tspan, h, step, rtol = 1e-8, atol = 1e-8):
     """
@@ -89,11 +100,11 @@ def adaptive_integrate(f, x0, tspan, h, step, rtol = 1e-8, atol = 1e-8):
             x0    - initial condition (numpy array)
             tspan - integration horizon (t0, tf) (tuple)
             h0    - initial step size
-            step   - integrator with signature: 
+            int   - integrator with signature: 
                         step(f,x,t,h) returns state, error at time t+h 
+                        - f rhs of ODE to be integrated
                         - x current state
                         - t current time 
-                        - f rhs of ODE to be integrated
                         - h stepsize
             rtol  - relative tolerance for time step adaptation 
             atol  - absolute tolerance for time step adaptation
@@ -106,7 +117,25 @@ def adaptive_integrate(f, x0, tspan, h, step, rtol = 1e-8, atol = 1e-8):
             ts - time points visited during integration (list)
             xs - trajectory of the system (list of numpy arrays)
     """
-    return ... # please complete this function 
+    t, tf = tspan
+    x = x0
+    trajectory = [x0]
+    ts = [t]
+    while t < tf:
+        h = min(h, tf-t)
+        x_hat, error = step(f,x,t,h)
+        if error <= rtol*norm(x) + atol:
+            # accept step and double step size 
+            t += h
+            x = x_hat
+            trajectory.append(x)
+            ts.append(t)
+            h *= 2.0
+        else:
+            # reject step and half step size
+            h /= 2.0
+    return trajectory, ts
+    #return ... # please complete this function 
                # Hint 1: The slide contain pseudo code that should be a good 
                #         starting ground!
                # Hint 2: use the condition error > rtol*norm(x) + atol

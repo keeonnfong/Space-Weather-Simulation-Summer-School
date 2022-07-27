@@ -1,3 +1,3 @@
 import golden_module as gm
 
-print(gm.PHI)
+print("The golden ratio is given by (1+sqrt(5))/2 = " + str(gm.PHI))

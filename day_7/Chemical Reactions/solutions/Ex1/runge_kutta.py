@@ -16,7 +16,17 @@ def explicit_RK_stepper(f,x,t,h,a,b,c):
         outputs: 
             x_hat - estimate of the state at time t+h
     """
-    return ... # please complete this function 
+    s = len(b)
+    ks = [f(x,t)]
+    x_hat = x + h*b[0]*ks[0]
+    for i in range(s-1):
+        y = x + h * sum(a[i][j]*ks[j] for j in range(i+1))
+        ks.append(f(y,t+c[i+1]*h))
+        x_hat += h*b[i+1]*ks[-1]
+    
+    return x_hat
+        
+    #return ... # please complete this function 
 
 def integrate(f, x0, tspan, h, step):
     """
@@ -27,7 +37,7 @@ def integrate(f, x0, tspan, h, step):
             x0    - initial condition (numpy array)
             tspan - integration horizon (t0, tf) (tuple)
             h     - step size
-            step   - integrator with signature: 
+            int   - integrator with signature: 
                         step(f,x,t,h) returns state at time t+h 
                         - f rhs of ODE to be integrated
                         - x current state
