@@ -9,7 +9,6 @@ Analytical solution: (1/c)*(x-((1-exp(c*x/nu))/(1-exp(c/nu))))
 
 Finite differences (FD) discretization:
     - Second-order cntered differences advection scheme
-    - First-order upwind
 
 """
 __author__ = 'Jordi Vila-Pérez'
@@ -19,84 +18,60 @@ __email__ = 'jvilap@mit.edu'
 import numpy as np
 import matplotlib.pyplot as plt
 from math import pi
-%matplotlib qt
 plt.close()
 import matplotlib.animation as animation
+%matplotlib qt
 
 "Flow parameters"
 nu = 0.01
 c = 2
-
-"Scheme parameters"
-beta = 2
-
-"Number of points"
 N = 32
 Dx = 1/N
 x = np.linspace(0,1,N+1)
+order = 1
 
 "Time parameters"
 dt = 0.1
-time = np.arange(0,3+dt,dt)
-nt = np.size(time)
+tf = 3
+time = np.arange(0,tf+dt,dt)
+nt = len(time)
+Dx = 1/N
+x = np.linspace(0,1,N+1)
 
-"Initialize solution variable"
+" initialize the solutions"
 U = np.zeros((N-1,nt))
 
-simulate_to = 3
-for it in range(simulate_to-1):#range(nt-1):
-
+for it in range(0,nt-1):
     "System matrix and RHS term"
     "Diffusion term"
     Diff = nu*(1/Dx**2)*(2*np.diag(np.ones(N-1)) - np.diag(np.ones(N-2),-1) - np.diag(np.ones(N-2),1))
-
-    "Advection term:"
-        
-    "Sensor"
-    U0 = U[:,it]
-    uaux = np.concatenate(([0],U0,[0]))
-    Du = uaux[1:N+1] - uaux[0:N] + 1e-8
-    r = Du[0:N-1]/Du[1:N]
     
-    "Limiter"
-    if beta>0:
-        phi = np.minimum(np.minimum(beta*r,1),np.minimum(r,beta))
-        phi = np.maximum(0,phi)
+    if order<2:
+        "Advection term: first order upwind"
+        cp = max(c,0)
+        cm = min(c,0)
+        Advp = cp*(np.diag(np.ones(N-1)) - np.diag(np.ones(N-2),-1)) 
+        Advm = cm*(np.diag(np.ones(N-1)) - np.diag(np.ones(N-2),+1)) 
+        
     else:
-        phi = 2*r/(r**2 + 1)
-        
-    phim = phi[0:N-2]
-    phip = phi[1:N-1]
-        
+        "Advection term: centered differences"
+        Advp = -0.5*c*np.diag(np.ones(N-2),-1)
+        Advm = -0.5*c*np.diag(np.ones(N-2),1)
     
-    "Upwind scheme"
-    cp = np.max([c,0])
-    cm = np.min([c,0])
+    Adv = (1/Dx)*(Advp-Advm)
+    Temp = (1/dt)*np.diag(np.ones(N-1))
+    A = Diff + Adv + Temp
     
-    Advp = cp*(np.diag(1-phi) - np.diag(1-phip,-1))
-    Advm = cm*(np.diag(1-phi) - np.diag(1-phim,1))
-    Alow = Advp-Advm
-    "Centered differences"
-    Advp = -0.5*c*np.diag(phip,-1)
-    Advm = -0.5*c*np.diag(phim,1)
-    Ahigh = Advp-Advm
-        
-    Adv = (1/Dx)*(Ahigh + Alow)
-    A = Diff + Adv
     "Source term"
-    F = np.ones(N-1)
+    F = np.ones(N-1)        
+    F = F + U[:,it]/dt
     
-    "Temporal terms"
-    A = A + (1/dt)*np.diag(np.ones(N-1))
-    F = F + U0/dt
-
-
     "Solution of the linear system AU=F"
     u = np.linalg.solve(A,F)
-    U[:,it+1] = u
-    u = np.concatenate(([0],u,[0]))
-
-
+    uplot = np.concatenate(([0],u,[0]))
+    ua = (1/c)*(x-((1-np.exp(c*x/nu))/(1-np.exp(c/nu))))
+    U[:,it+1]=u
+    
 ua = (1/c)*(x-((1-np.exp(c*x/nu))/(1-np.exp(c/nu))))
 
 "Animation of the results"
@@ -115,9 +90,10 @@ def animate(i):
     myAnimation.set_data(x, u)
     return myAnimation,
 
-anim = animation.FuncAnimation(fig,animate,frames=range(simulate_to),blit=True,repeat=False)
+anim = animation.FuncAnimation(fig,animate,frames=range(1,nt),blit=True,repeat=False)
 
 "Compute error"
+u = np.concatenate(([0],U[0:N+1,-1],[0]))
 error = np.max(np.abs(u-ua))
 print("Linf error u: %g\n" % error)
 
@@ -128,4 +104,3 @@ print("Pe number Pe=%g\n" % P);
 "CFL number"
 CFL = np.abs(c*dt/Dx)
 print("CFL number CFL=%g\n" % CFL);
-

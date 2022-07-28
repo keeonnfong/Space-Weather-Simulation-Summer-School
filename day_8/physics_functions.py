@@ -89,7 +89,7 @@ def convert_wavelength_to_joules(wavelength):
 def calc_tau(SZA_in_deg, density_in_m3, scale_height_in_km, cross_section):
 
     # We are only going to do this for a single wavelength for now!
-
+    print('for one wavelength only')
     cs = cross_section[0]
 
     # convert scale height to m:
@@ -108,6 +108,29 @@ def calc_tau(SZA_in_deg, density_in_m3, scale_height_in_km, cross_section):
     # calculate Tau:
     iWave = 5
     tau[iWave][:] = integrated_density * cross_section[iWave]
+
+    return tau
+
+def calc_tau_for_all_bins(SZA_in_deg, density_in_m3, scale_height_in_km, cross_section):
+
+    cs = cross_section[0]
+
+    # convert scale height to m:
+    h = scale_height_in_km * 1000.0
+
+    # convert SZA to radians:
+    sza = SZA_in_deg * cD2R_
+
+    # calculate integrated density (which is density * scale height):
+    integrated_density = density_in_m3 * h
+
+    nWaves = len(cross_section)
+    nAlts = len(density_in_m3)
+    tau = np.zeros((nWaves, nAlts))
+
+    # calculate Tau:
+    for iWave in range(nWaves):
+        tau[iWave][:] = integrated_density * cross_section[iWave]
 
     return tau
 
@@ -133,16 +156,15 @@ def calculate_Qeuv(density_in_m3,
 
     Qeuv = np.zeros(nAlts)
 
-    iWave = 5
-
-    # intensity is a function of altitude (for a given wavelength):
-    intensity = intensity_inf[iWave] * np.exp(-tau[iWave][:])
-    Qeuv = Qeuv + \
-        efficiency * \
-        density_in_m3 * \
-        intensity * \
-        cross_section[iWave] * \
-        energies[iWave]
+    for iWave in range(nWaves):
+       # intensity is a function of altitude (for a given wavelength):
+       intensity = intensity_inf[iWave] * np.exp(-tau[iWave][:])
+       Qeuv = Qeuv + \
+           efficiency * \
+           density_in_m3 * \
+           intensity * \
+           cross_section[iWave] * \
+           energies[iWave]
 
     return Qeuv
 
