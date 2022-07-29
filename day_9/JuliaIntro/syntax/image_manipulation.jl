@@ -13,7 +13,8 @@ two_philip = [philip philip]
 # four way philip
 four_way_philip = [head                    reverse(head, dims = 2);
                    reverse(head, dims = 1) rot180(head)]
-
+four_way_philip = [four_way_philip                    reverse(four_way_philip, dims = 2);
+                    reverse(four_way_philip, dims = 1) rot180(four_way_philip)]
 # Compression
 rand_img = load("random_pic_1.jpeg")
 U, Σ, V = svd(rand_img)

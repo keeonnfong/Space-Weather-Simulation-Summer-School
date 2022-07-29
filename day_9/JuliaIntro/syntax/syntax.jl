@@ -44,9 +44,13 @@ stacked_van_der_monde = [van_der_monde;
 
 # adding columns
 van_der_monde_bigger = [van_der_monde van_der_monde]
+A = [1; 2; 3]
+B = [4; 5; 6]
+A⋅B
 
 # indexing starts at 1!
 van_der_monde[1,3]
+
 # slicing
 van_der_monde[1:2,3]
 van_der_monde[1:2,2:3]
@@ -116,7 +120,9 @@ p = f(0.5)
 # vectorization/(map-reduce)
 # evaluates our function at every element of the supplied 
 # vector/array and returns the result in the same shape!
+# point applies to each element on the matrix
 p = f.([0.5, 2.0])
+f.(van_der_monde)
 
 # differences between python and julia
 # Why Julia was created
@@ -125,3 +131,7 @@ p = f.([0.5, 2.0])
 # https://docs.julialang.org/en/v1/manual/noteworthy-differences/
 # Julia for data science
 # https://www.imaginarycloud.com/blog/julia-vs-python/#future
+
+A = [1;2;3]
+B = [1;2;3]
+LinearAlgebra.dot(A,B)
