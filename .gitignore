@@ -4,3 +4,5 @@
 *.mat
 *.dat
 *.zip
+__pycache__/
+*.py[cod]
