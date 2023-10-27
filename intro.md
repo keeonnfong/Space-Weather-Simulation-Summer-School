@@ -84,3 +84,28 @@ Go into the Anaconda command prompt and install the missing packages.
 
 - Finally when you are in the folder you want to use for your work
 - `git clone <clone_link>`
+
+---------------
+
+
+## To create new git
+
+- First create repository within my own account
+- Then, run
+- git init
+- git add *
+- git commit -m "first commit"
+- git branch -M main
+- git remote add origin http://[whatever this is]
+- git push -u origin main
+
+if login fails
+- git config --global core.sshCommand "'C:\Windows\System32\OpenSSH\ssh.exe'"
+
+then push again, some login screen will show up, use 'type code' 
+try git push -u origin main again
+
+useful functions
+- git status
+- git remote -v (displays the origin code)
+- git remote set-url origin (this rewrites the origin url)
