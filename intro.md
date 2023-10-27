@@ -15,7 +15,7 @@ Qusai Al Shidi | qusai@umich.edu
 ## Let's get you set up.
 
 - Download and install [Anaconda](www.anaconda.com).
-- Run Anaconda Navigator.
+- Run Anaconda Navigator. - windows: CMD.exe prompt
 
 ---------------
 
@@ -25,7 +25,7 @@ Qusai Al Shidi | qusai@umich.edu
 
 Go into the Anaconda command prompt and install the missing packages.
 
-- Spyder
+- Spyder (usually already installed)
 - `conda install -c conda-forge bash` or `conda install -c msys2 m2-base` on Windows.
 - `conda install -c conda-forge pip`
 - `conda install -c conda-forge git`
@@ -48,7 +48,7 @@ Go into the Anaconda command prompt and install the missing packages.
 
 ---------------
 
-## Now *fork* it 🍴
+## Now *fork* it 🍴 - creates a copy that is in my own directory
 
 - Forking makes a copy of the repository for your own account.
 - Do this when making contributions to open source project to merge back one
@@ -68,8 +68,8 @@ Go into the Anaconda command prompt and install the missing packages.
 
 ## Let's configure git first
 
-- `git config --global user.name '<full name>'`
-- `git config --global user.email '<email>'`
+- `git config --global user.name '<full name>'` keeonnfong
+- `git config --global user.email '<email>'` keeonnfong@gmail.com
 
 ---------------
 
